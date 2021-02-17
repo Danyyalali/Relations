@@ -12,7 +12,7 @@ namespace ConsoleApp1
         public string body { get; set; }
 
     }
-    public class DbPosts : DbContext
+    /*public class DbPosts : DbContext
     {
         public DbPosts() : base()
         {
@@ -25,11 +25,204 @@ namespace ConsoleApp1
         {
             optionsBuilder.UseSqlServer(@"Server=.;Database=PostsDatabase;Trusted_Connection=True;");
         }
-    }
+    }*/
     class Program
     {
         static void Main(string[] args)
         {
+            ///////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////
+            //For storing the data in the database using one to one relationship
+            using (var context = new RelationContext())
+            {
+                string name, email;
+                int SectionId;
+                float cgpa;
+                Console.Write("Please enter Your name\nName:::");
+                name = Console.ReadLine();
+                Console.Write("Please enter Your Email\nEmail:::");
+                email = Console.ReadLine();
+                Console.Write("Please enter Your cgpa\nCGPA:::");
+                cgpa = float.Parse(Console.ReadLine());
+                Console.Write("Please enter Your Section ID\nA=1--B=2--C=3--D=4--E1=5--E2=6\nSection Id:::");
+                SectionId =int.Parse( Console.ReadLine());
+                var std = new Student()
+                {
+                    name = name,
+                    cgpa = cgpa,
+                    email = email,
+                    SectionId = SectionId
+                };
+                context.Students.Add(std);
+                /*var sec1 = new Section()
+                {
+                    SecitonName = "E2"
+                };
+                context.Sections.Add(sec1);*/
+                context.SaveChanges();
+
+                string streetNo,city, Province, state;
+                int HouseNo;
+                Console.Write("Please enter Your House Number\nHouse Number:::");
+                HouseNo=int.Parse( Console.ReadLine());
+                Console.Write("Please enter Your Street Number\nStreet Number:::");
+                streetNo = Console.ReadLine();
+                Console.Write("Please enter Your city\ncity:::");
+                city = Console.ReadLine();
+                Console.Write("Please enter Your Province\nProvince:::");
+                Province = Console.ReadLine();
+                Console.Write("Please enter Your State\nState:::");
+                state = Console.ReadLine();
+
+                var add = new Address()
+                {
+                    HouseNo = HouseNo,
+                    streetNO = streetNo,
+                    city = city,
+                    Province = Province,
+                    state = state,
+                    StudentId = std.Id
+                };
+                context.Adresses.Add(add);
+
+                int AddCourse = 1;
+                string CourseName;
+                int credits;
+                Course cours= new Course();
+                StuCorse stucor;
+                while (AddCourse == 1)
+                {
+                    Console.WriteLine("Please enter the Course Name you want to enroll in");
+                    CourseName = Console.ReadLine();
+                    if (CourseName.Contains("lab") || CourseName.Contains("Lab") || CourseName.Contains("LAB"))
+                    {
+                        credits = 1;
+                    }
+                    else credits = 3;
+
+
+                    /*var courses = from c in context.Courses
+                                  select c.Title.ToLower;*/
+                    int PresentId = 0;
+                    int length = context.Courses.Count();
+                    int counter = 1;
+                    foreach (var item in context.Courses)
+                    {
+                        
+                        if (CourseName.ToLower() == item.Title.ToLower())
+                        {
+                            PresentId = item.Id;
+                            break;
+                        }
+                        if (counter == length)
+                        {
+                            cours = new Course()
+                            {
+                                Title = CourseName.ToLower(),
+                                creditHours = credits
+                            };
+                            context.Add(cours);
+                        }
+                        counter++;
+
+                    }
+                    context.SaveChanges();
+                    if (PresentId == 0)
+                    {
+                        stucor = new StuCorse()
+                        {
+                            StudentId = std.Id,
+                            CourseId = cours.Id
+                        };
+                        context.SCTable.Add(stucor);
+                        context.SaveChanges();
+
+
+                        
+                    }
+                    else
+                    {
+                        stucor = new StuCorse()
+                        {
+                            StudentId = std.Id,
+                            CourseId = PresentId
+                        };
+                        context.SCTable.Add(stucor);
+                        context.SaveChanges();
+
+                    }
+
+                    AddCourse = 0;
+
+
+                }
+
+                
+
+            }
+
+
+
+            //for printing the data from the datbabase
+            List<Student> StuList = new List<Student>();
+            List<Address> StuAddList = new List<Address>();
+
+            /*using (var context = new RelationContext())
+            {
+                int counter = 1;
+                StuList= context.Students.ToList();
+                StuAddList = context.Adresses.ToList();
+                foreach (var item in StuList)
+                {
+                    Console.WriteLine(counter+"\nPrinting the Student Details");
+                    counter++;
+                    Console.Write(item.cgpa + " " + item.email + " " + item.name+" ");
+                    var Addresses = from add in StuAddList
+                                   where add.StudentId == item.Id
+                                   select add;
+                    foreach (var add in Addresses)
+                    {
+                        Console.Write(add.HouseNo + " " + add.streetNO + " " + add.city + " " + add.Province + " " + add.state);
+                       
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine();
+
+
+                }
+
+            }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /////////////////////////////////////////////////
+            ///Code for simple database mani[pulation
             string title, body;
             int id;
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////
